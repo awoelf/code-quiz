@@ -1,0 +1,27 @@
+:root {
+    --bg-color: #203849;
+    --h-font: "Courier Prime", monospace;
+    --main-font: "Noto Sans", sans-serif;
+}
+
+body {
+    background-color: var(--bg-color);
+}
+
+h1, h3 {
+    font-family: var(--h-font)
+}
+
+p {
+    font-family: var(--main-font)
+}
+
+button {
+    font-family: var(--main-font);
+}
+
+.ans-choice {
+    text-align: left;
+    margin: .5rem;
+    margin-left: 0;
+}
