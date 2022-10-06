@@ -1,9 +1,9 @@
-let timeLeft = 1;
+let timeLeft = 60;
 let score = 0;
 let currentQuestion = 0;
 let highScore = {};
 
-// Screens
+// Questions
 let questions = [
     {
         "num": 1,
@@ -37,6 +37,63 @@ let questions = [
     }
 ];
 
+// Screens
+let mainScreen = $("#main-screen");
+
+let startScreen = 
+    `<section id="start-screen screen" class="align-items-center justify-content-center text-center p-5">
+        <section  class="container">
+            <h1>Coding Quiz Challenge</h1>
+            <section class="container col-md-8 col-sm-12">
+                <p>Answer the following questions to test your JavaScript knowledge! Keep in mind that incorrect answers will penalize your score/time by ten seconds!</p>
+            </section>
+            <button id="start-btn" class="btn btn-primary bg-info">Start Quiz</button>
+        </section>
+    </section>`;
+
+let questionScreen = 
+    `<section id="question-screen screen" class="col-sm-10 col-md-8 col-lg-6 col-xl-4 align-items-center m-auto p-5">  
+        <section class="container">
+            <section class="d-flex justify-content-between">
+                <section id="timerContainer" class="d-flex">
+                </section>
+                <section id="scoreContainer" class="d-flex mr-auto ml-3">
+                </section>
+            </section>
+            <h3 id="title"></h3>
+            <p id="question"></p>
+            <section id="answers" class="p-0 text-left w-25">
+            </section>
+            <h3 id="feedback"></h3>
+        </section>
+    </section>`;
+
+let endScreen = 
+    `<section id="end-screen screen" class="col-4 m-auto text-center p-5">
+        <h1>Your Results</h1>
+        <section class="text-center">
+            <p id="final-score">Score: </p>
+            <section class="text-nowrap row align-items-baseline justify-content-center">
+                <label>Your initials: </label>
+                <input 
+                type="text" 
+                placeholder="AAA"
+                class="col-sm-3 col-md-2 ml-2"
+                > 
+            </section>
+        </section>                   
+        <section class="m-1">
+            <button class="btn btn-primary bg-info m-1">Submit Score</button>
+            <button id="reset-button" class="btn btn-primary bg-info m-1">Reset Quiz</button>
+        </section>
+    </section>`;
+
+let scoreboard = 
+    `<section id="scoreboard screen" class="col-3 align-items-center justify-content-center text-center p-5 m-auto">
+        <ol class="list-group">
+        </ol>
+    </section>`;
+
 function createQuestion() {
     $("#title").text(`Question ${questions[currentQuestion].num}`);
     $("#question").text(questions[currentQuestion].question);
@@ -45,9 +102,9 @@ function createQuestion() {
     for (let i = 0; i < questions[currentQuestion].answers.length; i++) {
         let answerChoice = $("<button>").attr("id", `${i}`).attr("class", "btn btn-primary bg-info ans-choice w-auto text-nowrap").text(`${i + 1}. ${questions[currentQuestion].answers[i]}`);
         if(i === questions[currentQuestion].correct) {
-            answerChoice.attr("id", "correct");
+            answerChoice.addClass("correct");
         } else {
-            answerChoice.attr("id", "incorrect");
+            answerChoice.addClass("incorrect");
         }
         answerContainer.append(answerChoice);
     };
@@ -68,6 +125,7 @@ function startTimer() {
             timeDisplay.text("Time's up!");
             timeSymbol.text("timer_off")
             clearInterval(startTimer);
+            console.log("timer Done!!!");
             endQuiz();
         }
     }, 1000)
@@ -79,27 +137,26 @@ function updateScore() {
     $("#scoreContainer").append(scoreSymbol).append(scoreDisplay);
 }
 
-function resetQuiz(screen)  {
+function resetQuiz() {
     timeLeft = 60;
     score = 0;
     currentQuestion = 0;
-    hideScreen(screen);
-    $("#main-screen").prepend($("#startScreen"));
+    goToScreen(startScreen)
 }
 
 function startQuiz() {
-    hideScreen("#start-screen");
+    timeLeft = 60;
+    score = 0;
+    currentQuestion = 0;
+    goToScreen(questionScreen)
     createQuestion();
     startTimer();
     updateScore();
 }
 
-function hideScreen(screen) {
-    $(screen).attr("class", "d-none");
-}
-
-function showScreen(screen) {
-    $(screen).removeAttr("class", "d-none");
+function goToScreen(screen) {
+    $("#screen").empty();
+    mainScreen.prepend(screen)
 }
 
 function clearQuestion() {
@@ -110,14 +167,12 @@ function clearQuestion() {
 
 function endQuiz() {
     clearQuestion();
-    showScreen("#end-screen");
-    // prompt initials
-    // save high score to local storage
+    goToScreen(endScreen);
+    // save high score and initials to local storage
 }
 
 function showScoreboard() {
-    // remove end screen
-    // show scoreboard
+    goToScreen(scoreboard);
     // restart quiz button
     // display initials with score, ordered from highest to lowest
 }
@@ -127,7 +182,9 @@ function nextQuestion() {
         currentQuestion++;
     } else {
         clearInterval(startTimer);
+        endQuiz();
     }
+    createQuestion();
 }
 
 function showFeedback(message) {
@@ -156,16 +213,13 @@ function wrongAns() {
     nextQuestion();
 }
 
+
+resetQuiz();
+
+
 $("#start-btn").on("click", startQuiz);
-// incorrect answer
-// correct answer
-// input initials
-// go to scoreboard
-// restart quiz
+$(".incorrect").on("click", wrongAns);
+$(".correct").on("click", correctAns);
+$("#reset-button").on("click", resetQuiz);
 
-
-
-
-let startScreen = $("<section>").attr("id", "start-screen").attr("class", "align-items-center justify-content-center text-center p-5");
-startScreen.append($("<section>").attr("class", "container"));
-startScreen.children("section").append($())
+console.log(mainScreen.text);
