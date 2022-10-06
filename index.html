@@ -5,21 +5,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>Code Quiz</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
-        <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Noto+Sans&display=swap" rel="stylesheet"> 
+        <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Noto+Sans:ital@0;1&display=swap" rel="stylesheet"> 
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
         <link rel="stylesheet" href="./assets/css/style.css" />
     </head>
-    <body class="vh-100 vw-100 text-white overflow-auto">
-        <section id="start" class="d-flex align-items-center justify-content-center text-center p-5">
+    <body id="main-screen" class="vh-100 vw-100 text-white overflow-hidden">
+        <section id="start-screen" class="align-items-center justify-content-center text-center p-5">
             <section  class="container">
-                <h1 class="">Coding Quiz Challenge</h1>
-                <section class="container col-md-8 col-sm-12 justify-content-center">
-                    <p class="">Answer the following questions to test your JavaScript knowledge! Keep in mind that incorrect answers will penalize your score/time by ten seconds!</p>
+                <h1>Coding Quiz Challenge</h1>
+                <section class="container col-md-8 col-sm-12">
+                    <p>Answer the following questions to test your JavaScript knowledge! Keep in mind that incorrect answers will penalize your score/time by ten seconds!</p>
                 </section>
                 <button id="start-btn" class="btn btn-primary bg-info">Start Quiz</button>
             </section>
         </section>
-        <section id="questionContainer" hidden class="d-flex col-sm-10 col-md-8 col-lg-6 col-xl-4 align-items-center m-auto p-5">  
+        <section id="question-screen" class="col-sm-10 col-md-8 col-lg-6 col-xl-4 align-items-center m-auto p-5">  
             <section class="container">
                 <section class="d-flex justify-content-between">
                     <section id="timerContainer" class="d-flex">
@@ -31,20 +31,37 @@
                 <p id="question"></p>
                 <section id="answers" class="p-0 text-left w-25">
                 </section>
-            </section>
-            <section id="feedback">
-                <!-- add feedback section -->
+                <h3 id="feedback"></h3>
             </section>
         </section>
-        <!-- <section>
-            end screen
+        <section id="end-screen" class="d-none col-4 text-center p-5">
+            <h1>Your Results</h1>
+            <section class="text-center">
+                <p id="final-score">Score: </p>
+                <section class="text-nowrap row align-items-baseline justify-content-center">
+                    <label>Your initials: </label>
+                    <input 
+                    type="text" 
+                    placeholder="AAA"
+                    class="col-sm-3 col-md-1 ml-2"
+                    > 
+                </section>
+            </section>                   
+            <section class="m-1">
+                <button class="btn btn-primary bg-info m-1">Submit Score</button>
+                <button class="btn btn-primary bg-info m-1">Reset Quiz</button>
+            </section>
         </section>
-        <section>
-            scoreboard
-        </section> -->
+        <section id="scoreboard" class="d-none col-3 align-items-center justify-content-center text-center p-5 m-auto">
+            <ol class="list-group">
+            </ol>
+        </section>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
         <script src="./assets/js/script.js"></script>
     </body>
     
 </html>
+
+<!-- Figure out how to make code snippets and create them with a js command 
+        * create jquery template -->

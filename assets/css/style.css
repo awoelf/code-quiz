@@ -12,8 +12,12 @@ h1, h3 {
     font-family: var(--h-font)
 }
 
-p {
+p, label, input {
     font-family: var(--main-font)
+}
+
+li {
+    color: var(--bg-color);
 }
 
 button {
@@ -26,6 +30,6 @@ button {
     margin-left: 0;
 }
 
-#hide{
-    display: none;
+#feedback {
+    font-style: italic;
 }

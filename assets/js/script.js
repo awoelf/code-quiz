@@ -1,7 +1,9 @@
-let startBtn = $("#start-btn");
-let timeLeft = 60;
+let timeLeft = 1;
 let score = 0;
 let currentQuestion = 0;
+let highScore = {};
+
+// Screens
 let questions = [
     {
         "num": 1,
@@ -35,16 +37,14 @@ let questions = [
     }
 ];
 
-
-
-function createQuestion(num, question, answers, correct) {
-    $("#title").text(`Question ${num}`);
-    $("#question").text(question);
+function createQuestion() {
+    $("#title").text(`Question ${questions[currentQuestion].num}`);
+    $("#question").text(questions[currentQuestion].question);
 
     let answerContainer = $("#answers");
-    for (let i = 0; i < answers.length; i++) {
-        let answerChoice = $("<button>").attr("id", `${i}`).attr("class", "btn btn-primary bg-info ans-choice w-auto text-nowrap").text(`${i + 1}. ${answers[i]}`);
-        if(i === correct) {
+    for (let i = 0; i < questions[currentQuestion].answers.length; i++) {
+        let answerChoice = $("<button>").attr("id", `${i}`).attr("class", "btn btn-primary bg-info ans-choice w-auto text-nowrap").text(`${i + 1}. ${questions[currentQuestion].answers[i]}`);
+        if(i === questions[currentQuestion].correct) {
             answerChoice.attr("id", "correct");
         } else {
             answerChoice.attr("id", "incorrect");
@@ -55,7 +55,7 @@ function createQuestion(num, question, answers, correct) {
 
 function startTimer() {
     let timeSymbol = $("<span>").attr("class", "material-symbols-outlined").text("timer");
-    let timeDisplay = $("<p>").attr("id", "time").attr("class", "ml-2").text("60 seconds remaining");
+    let timeDisplay = $("<p>").attr("id", "time").attr("class", "ml-2").text(`${timeLeft} seconds remaining`);
     $("#timerContainer").append(timeSymbol).append(timeDisplay);
     setInterval(function() {
         if (timeLeft > 1) {
@@ -68,6 +68,7 @@ function startTimer() {
             timeDisplay.text("Time's up!");
             timeSymbol.text("timer_off")
             clearInterval(startTimer);
+            endQuiz();
         }
     }, 1000)
 }
@@ -78,24 +79,38 @@ function updateScore() {
     $("#scoreContainer").append(scoreSymbol).append(scoreDisplay);
 }
 
-function resetQuiz()  {
+function resetQuiz(screen)  {
     timeLeft = 60;
     score = 0;
     currentQuestion = 0;
-    // return to start screen
+    hideScreen(screen);
+    $("#main-screen").prepend($("#startScreen"));
 }
 
 function startQuiz() {
-    $("#start").remove();
-    $("#questionContainer").attr("style", "display: contents");
-    createQuestion(questions[currentQuestion].num, questions[currentQuestion].question, questions[currentQuestion].answers, questions[currentQuestion].correct);
+    hideScreen("#start-screen");
+    createQuestion();
     startTimer();
     updateScore();
 }
 
+function hideScreen(screen) {
+    $(screen).attr("class", "d-none");
+}
+
+function showScreen(screen) {
+    $(screen).removeAttr("class", "d-none");
+}
+
+function clearQuestion() {
+    $("#title").text(" ");
+    $("#question").text(" ");
+    $("#answers").empty();
+}
+
 function endQuiz() {
-    // remove question container
-    // show end screen
+    clearQuestion();
+    showScreen("#end-screen");
     // prompt initials
     // save high score to local storage
 }
@@ -112,24 +127,36 @@ function nextQuestion() {
         currentQuestion++;
     } else {
         clearInterval(startTimer);
-
     }
+}
+
+function showFeedback(message) {
+    let feedbackTimer = 3;
+    setInterval(function() {
+        if (timeLeft > 1) {
+            $("#feedback").text(message);
+            feedbackTimer--;
+        } else {
+            $("#feedback").text(" ")
+            clearInterval(showFeedback);
+        }
+    }, 1000)
 }
 
 function correctAns() {
     score += 10;
-    // display feedback
+    showFeedback("Correct!");
     nextQuestion();
 }
 
 function wrongAns() {
     timeLeft -= 10;
     score -= 10;
-    // display feedback
+    showFeedback("Wrong!");
     nextQuestion();
 }
 
-startBtn.on("click", startQuiz);
+$("#start-btn").on("click", startQuiz);
 // incorrect answer
 // correct answer
 // input initials
@@ -139,3 +166,6 @@ startBtn.on("click", startQuiz);
 
 
 
+let startScreen = $("<section>").attr("id", "start-screen").attr("class", "align-items-center justify-content-center text-center p-5");
+startScreen.append($("<section>").attr("class", "container"));
+startScreen.children("section").append($())
