@@ -12,8 +12,12 @@ h1, h3 {
     font-family: var(--h-font)
 }
 
-p, label, input {
+p, label, input, li {
     font-family: var(--main-font)
+}
+
+input {
+    text-align: center;
 }
 
 li {

@@ -2,35 +2,31 @@ let timeLeft = 60;
 let score = 0;
 let currentQuestion = 0;
 let highScore = {};
+let quizInterval;
 
 // Questions
 let questions = [
     {
-        "num": 1,
         "question": "Commonly used data types DO NOT include: ",
         "answers": ["Strings", "Booleans", "Alerts", "Numbers"],
         "correct": 2,
     },
     {
-        "num": 2,
         "question": "Arrays in JavaScript can be used to store ______.",
         "answers": ["Numbers and strings", "Other arrays", "Booleans", "All of the above"],
         "correct": 3,
     },
     {
-        "num": 3,
         "question": "The condition in an if/else statement is enclosed within: ",
         "answers": ["Quotes", "Curly brackets", "Parentheses", "Square brackets"],
         "correct": 2,
     },
     {
-        "num": 4,
         "question": "String values must be enclosed within ______ when being assigned to variables.",
         "answers": ["Commas", "Curly brackets", "Quotes", "Parentheses"],
         "correct": 2,
     },
     {
-        "num": 5,
         "question": "A very useful tool used during development and debugging for printing content to the debugger is: ",
         "answers": ["JavaScript", "Terminal/bash", "For loops", "console.log"],
         "correct": 3,
@@ -41,66 +37,78 @@ let questions = [
 let mainScreen = $("#main-screen");
 
 let startScreen = 
-    `<section id="start-screen screen" class="align-items-center justify-content-center text-center p-5">
+    `<section id="start-screen" class="align-items-center justify-content-center text-center p-5 screen">
         <section  class="container">
             <h1>Coding Quiz Challenge</h1>
             <section class="container col-md-8 col-sm-12">
                 <p>Answer the following questions to test your JavaScript knowledge! Keep in mind that incorrect answers will penalize your score/time by ten seconds!</p>
             </section>
-            <button id="start-btn" class="btn btn-primary bg-info">Start Quiz</button>
+            <button id="scoreboard-btn" class="btn btn-primary bg-info m-1">Scoreboard</button>
+            <button id="start-btn" class="btn btn-primary bg-info m-1">Start Quiz</button>
         </section>
     </section>`;
 
 let questionScreen = 
-    `<section id="question-screen screen" class="col-sm-10 col-md-8 col-lg-6 col-xl-4 align-items-center m-auto p-5">  
+    `<section id="question-screen" class="col-sm-10 col-md-8 col-lg-6 col-xl-4 align-items-center m-auto p-5 screen">  
         <section class="container">
             <section class="d-flex justify-content-between">
                 <section id="timerContainer" class="d-flex">
                 </section>
                 <section id="scoreContainer" class="d-flex mr-auto ml-3">
+                    <span class="material-symbols-outlined">scoreboard</span>
+                    <p id="score" class="ml-2"></p>
                 </section>
             </section>
             <h3 id="title"></h3>
             <p id="question"></p>
             <section id="answers" class="p-0 text-left w-25">
             </section>
-            <h3 id="feedback"></h3>
+            <h3 id="feedback" class="m2"></h3>
         </section>
     </section>`;
 
 let endScreen = 
-    `<section id="end-screen screen" class="col-4 m-auto text-center p-5">
+    `<section id="end-screen" class="col-5 m-auto text-center p-5 screen">
         <h1>Your Results</h1>
         <section class="text-center">
-            <p id="final-score">Score: </p>
+            <section class="d-flex justify-content-center">
+                <span class="material-symbols-outlined mr-2">scoreboard</span>
+                <p id="final-score"></p>
+            </section>
+            
             <section class="text-nowrap row align-items-baseline justify-content-center">
+                <span class="material-symbols-outlined mr-2 align-self-center">abc</span>
                 <label>Your initials: </label>
-                <input 
+                <input
+                id="text-input"
+                maxlength="3" 
                 type="text" 
                 placeholder="AAA"
-                class="col-sm-3 col-md-2 ml-2"
+                class="col-sm-4 col-md-3 ml-2"
                 > 
             </section>
         </section>                   
         <section class="m-1">
-            <button class="btn btn-primary bg-info m-1">Submit Score</button>
-            <button id="reset-button" class="btn btn-primary bg-info m-1">Reset Quiz</button>
+            <button id="submit-btn" class="btn btn-primary bg-info m-1">Submit Score</button>
         </section>
     </section>`;
 
 let scoreboard = 
-    `<section id="scoreboard screen" class="col-3 align-items-center justify-content-center text-center p-5 m-auto">
-        <ol class="list-group">
-        </ol>
+    `<section id="scoreboard" class="col-sm-6 col-md-5 col-xl-3 align-items-center justify-content-center text-center p-5 m-auto screen">
+        <h1>Scoreboard</h1>
+        <ul id="score-list" class="list-group-flush rounded bg-transparent m-auto p-0">
+        </ul>
+        <button id="reset-button" class="btn btn-primary bg-info m-1">Reset Quiz</button>
     </section>`;
 
 function createQuestion() {
-    $("#title").text(`Question ${questions[currentQuestion].num}`);
+    clearQuestion();
+    $("#title").text(`Question ${currentQuestion + 1}`);
     $("#question").text(questions[currentQuestion].question);
 
     let answerContainer = $("#answers");
     for (let i = 0; i < questions[currentQuestion].answers.length; i++) {
-        let answerChoice = $("<button>").attr("id", `${i}`).attr("class", "btn btn-primary bg-info ans-choice w-auto text-nowrap").text(`${i + 1}. ${questions[currentQuestion].answers[i]}`);
+        let answerChoice = $("<button>").attr("class", "btn btn-primary bg-info ans-choice w-auto text-nowrap").text(`${i + 1}. ${questions[currentQuestion].answers[i]}`);
         if(i === questions[currentQuestion].correct) {
             answerChoice.addClass("correct");
         } else {
@@ -114,7 +122,7 @@ function startTimer() {
     let timeSymbol = $("<span>").attr("class", "material-symbols-outlined").text("timer");
     let timeDisplay = $("<p>").attr("id", "time").attr("class", "ml-2").text(`${timeLeft} seconds remaining`);
     $("#timerContainer").append(timeSymbol).append(timeDisplay);
-    setInterval(function() {
+    quizInterval = setInterval(function() {
         if (timeLeft > 1) {
             timeDisplay.text(`${timeLeft} seconds remaining`);
             timeLeft--;
@@ -124,7 +132,7 @@ function startTimer() {
         } else {
             timeDisplay.text("Time's up!");
             timeSymbol.text("timer_off")
-            clearInterval(startTimer);
+            clearInterval(quizInterval);
             console.log("timer Done!!!");
             endQuiz();
         }
@@ -132,16 +140,14 @@ function startTimer() {
 }
 
 function updateScore() {
-    let scoreSymbol = $("<span>").attr("class", "material-symbols-outlined").text("scoreboard");
-    let scoreDisplay = $("<p>").attr("id", "score").attr("class", "ml-2").text(`Score: ${score}`);
-    $("#scoreContainer").append(scoreSymbol).append(scoreDisplay);
+    $("#score").text(`Score: ${score}`);
 }
 
 function resetQuiz() {
     timeLeft = 60;
     score = 0;
     currentQuestion = 0;
-    goToScreen(startScreen)
+    goToScreen(startScreen);
 }
 
 function startQuiz() {
@@ -155,7 +161,7 @@ function startQuiz() {
 }
 
 function goToScreen(screen) {
-    $("#screen").empty();
+    $("#main-screen .screen").remove();
     mainScreen.prepend(screen)
 }
 
@@ -168,40 +174,34 @@ function clearQuestion() {
 function endQuiz() {
     clearQuestion();
     goToScreen(endScreen);
-    // save high score and initials to local storage
+    $("#final-score").text(`Score: ${score}`);
 }
 
 function showScoreboard() {
     goToScreen(scoreboard);
-    // restart quiz button
-    // display initials with score, ordered from highest to lowest
 }
 
 function nextQuestion() {
-    if (currentQuestion < 5) {
+    if (currentQuestion < 4) {
         currentQuestion++;
     } else {
-        clearInterval(startTimer);
+        clearInterval(quizInterval);
         endQuiz();
     }
     createQuestion();
 }
 
 function showFeedback(message) {
-    let feedbackTimer = 3;
-    setInterval(function() {
-        if (timeLeft > 1) {
-            $("#feedback").text(message);
-            feedbackTimer--;
-        } else {
-            $("#feedback").text(" ")
-            clearInterval(showFeedback);
-        }
-    }, 1000)
+    $("#feedback").text(message);
+    let feedbackTimer = setInterval(function() {
+        $("#feedback").text(" ");
+        clearInterval(feedbackTimer);
+    }, 2000)
 }
 
 function correctAns() {
     score += 10;
+    updateScore();
     showFeedback("Correct!");
     nextQuestion();
 }
@@ -209,17 +209,26 @@ function correctAns() {
 function wrongAns() {
     timeLeft -= 10;
     score -= 10;
+    updateScore();
     showFeedback("Wrong!");
     nextQuestion();
 }
 
+// FIX THIS PLEASE
+function updateScoreboard() {
+    localStorage.setItem($("#text-input").val(), JSON.stringify(score));
+    goToScreen(scoreboard);
+    for (let i = 0; i < localStorage.length; i++) {
+        let newScore = $("li").addClass("list-group-item bg-transparent text-white border-white").text(`${localStorage.key(i)}   -   ${localStorage.getItem(localStorage.key(i))}`)
+        $("#score-list").append(newScore);
+        console.log(`${localStorage.key(i)}   -   ${localStorage.getItem(localStorage.key(i))}`);
+    }
+}
 
 resetQuiz();
-
-
-$("#start-btn").on("click", startQuiz);
-$(".incorrect").on("click", wrongAns);
-$(".correct").on("click", correctAns);
-$("#reset-button").on("click", resetQuiz);
-
-console.log(mainScreen.text);
+$(document).on("click", "#start-btn", startQuiz);
+$(document).on("click", ".incorrect", wrongAns);
+$(document).on("click", ".correct", correctAns);
+$(document).on("click", "#reset-button", resetQuiz);
+$(document).on("click", "#scoreboard-btn", showScoreboard);
+$(document).on("click", "#submit-btn", updateScoreboard);
