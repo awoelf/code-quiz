@@ -12,8 +12,16 @@ h1, h3 {
     font-family: var(--h-font)
 }
 
-p {
+p, label, input, li {
     font-family: var(--main-font)
+}
+
+input {
+    text-align: center;
+}
+
+li {
+    word-spacing: 5em;
 }
 
 button {
@@ -24,4 +32,8 @@ button {
     text-align: left;
     margin: .5rem;
     margin-left: 0;
+}
+
+#feedback {
+    font-style: italic;
 }
