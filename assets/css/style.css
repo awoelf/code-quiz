@@ -21,7 +21,7 @@ input {
 }
 
 li {
-    color: var(--bg-color);
+    word-spacing: 5em;
 }
 
 button {

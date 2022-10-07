@@ -7,29 +7,29 @@ let quizInterval;
 // Questions
 let questions = [
     {
-        "question": "Commonly used data types DO NOT include: ",
-        "answers": ["Strings", "Booleans", "Alerts", "Numbers"],
+        "question": "Which of the following languages adds interactivity to webpages and apps?",
+        "answers": ["HTML", "Bootstrap", "JavaScript", "CSS"],
         "correct": 2,
     },
     {
-        "question": "Arrays in JavaScript can be used to store ______.",
-        "answers": ["Numbers and strings", "Other arrays", "Booleans", "All of the above"],
+        "question": "How do you implement a script into your code?",
+        "answers": ["Use an <import> tag", "Use a <javascript> tag", "Use a <link> tag", "Use a <script> tag"],
         "correct": 3,
     },
     {
-        "question": "The condition in an if/else statement is enclosed within: ",
-        "answers": ["Quotes", "Curly brackets", "Parentheses", "Square brackets"],
-        "correct": 2,
+        "question": "Given a = 10, b = 9, and c = true; which of the following statements results in a false value?",
+        "answers": ["a === '10'", "a === 10", "c == !false", "b == a - 1"],
+        "correct": 0,
     },
     {
-        "question": "String values must be enclosed within ______ when being assigned to variables.",
-        "answers": ["Commas", "Curly brackets", "Quotes", "Parentheses"],
-        "correct": 2,
+        "question": "Which of the following creates a JavaScript function called sortNums?",
+        "answers": ["sortNums() {}", "function sortNums() {}", "void sortNums() {}", "function sortNums {}"],
+        "correct": 1,
     },
     {
-        "question": "A very useful tool used during development and debugging for printing content to the debugger is: ",
-        "answers": ["JavaScript", "Terminal/bash", "For loops", "console.log"],
-        "correct": 3,
+        "question": "Which built-in JavaScript function allows you to create a timer?",
+        "answers": ["setInterval", "createTimer", "timer", "timer.setInterval"],
+        "correct": 0,
     }
 ];
 
@@ -89,18 +89,25 @@ let endScreen =
             </section>
         </section>                   
         <section class="m-1">
-            <button id="submit-btn" class="btn btn-primary bg-info m-1">Submit Score</button>
+            <button id="scoreboard-btn" class="btn btn-primary bg-info m-2">Submit Score</button>
         </section>
     </section>`;
 
 let scoreboard = 
-    `<section id="scoreboard" class="col-sm-6 col-md-5 col-xl-3 align-items-center justify-content-center text-center p-5 m-auto screen">
+    `<section id="scoreboard" class="col-sm-6 col-md-5 col-xl-3 justify-content-center text-center p-5 m-auto screen">
         <h1>Scoreboard</h1>
-        <ul id="score-list" class="list-group-flush rounded bg-transparent m-auto p-0">
+        <ul id="score-list" class="list-group-flush bg-transparent m-auto p-0">
         </ul>
-        <button id="reset-button" class="btn btn-primary bg-info m-1">Reset Quiz</button>
+        <button id="reset-button" class="btn btn-primary bg-info m-2">Reset Quiz</button>
     </section>`;
 
+let listItem = 
+    `<li class="d-flex justify-content-between list-group-item align-items-center bg-transparent border-white text-white">
+            <p class="initials-scoreboard mb-0"></p><p class="score-scoreboard text-right mb-0"></p>
+    </li>`;
+
+                // <p id="initials-scoreboard" class="text-white"></p>
+                // <p id="score-scoreboard" class="text-white"></p>
 function createQuestion() {
     clearQuestion();
     $("#title").text(`Question ${currentQuestion + 1}`);
@@ -133,7 +140,6 @@ function startTimer() {
             timeDisplay.text("Time's up!");
             timeSymbol.text("timer_off")
             clearInterval(quizInterval);
-            console.log("timer Done!!!");
             endQuiz();
         }
     }, 1000)
@@ -177,10 +183,6 @@ function endQuiz() {
     $("#final-score").text(`Score: ${score}`);
 }
 
-function showScoreboard() {
-    goToScreen(scoreboard);
-}
-
 function nextQuestion() {
     if (currentQuestion < 4) {
         currentQuestion++;
@@ -214,14 +216,15 @@ function wrongAns() {
     nextQuestion();
 }
 
-// FIX THIS PLEASE
 function updateScoreboard() {
-    localStorage.setItem($("#text-input").val(), JSON.stringify(score));
+    if ($("#text-input").val()) {
+        localStorage.setItem($("#text-input").val(), JSON.stringify(score));
+    }
     goToScreen(scoreboard);
     for (let i = 0; i < localStorage.length; i++) {
-        let newScore = $("li").addClass("list-group-item bg-transparent text-white border-white").text(`${localStorage.key(i)}   -   ${localStorage.getItem(localStorage.key(i))}`)
-        $("#score-list").append(newScore);
-        console.log(`${localStorage.key(i)}   -   ${localStorage.getItem(localStorage.key(i))}`);
+        mainScreen.find("#score-list").append(listItem);
+        mainScreen.find(".initials-scoreboard:last").text(`${localStorage.key(i)}`);
+        mainScreen.find(".score-scoreboard:last").text(`${localStorage.getItem(localStorage.key(i))}`);
     }
 }
 
@@ -230,5 +233,4 @@ $(document).on("click", "#start-btn", startQuiz);
 $(document).on("click", ".incorrect", wrongAns);
 $(document).on("click", ".correct", correctAns);
 $(document).on("click", "#reset-button", resetQuiz);
-$(document).on("click", "#scoreboard-btn", showScoreboard);
-$(document).on("click", "#submit-btn", updateScoreboard);
+$(document).on("click", "#scoreboard-btn", updateScoreboard);
